@@ -21,8 +21,8 @@ const ModalNewTask = ({ isOpen, onClose, id = null }: Props) => {
     tags: "",
     startDate: "",
     dueDate: "",
-    authorUserId: "1",
-    assignedUserId: "1",
+    authorUserId: "",
+    assignedUserId: "",
     projectId: "",
   });
 
@@ -172,7 +172,25 @@ const ModalNewTask = ({ isOpen, onClose, id = null }: Props) => {
           />
         </div>
 
-        
+        <input
+          type="text"
+          name="authorUserId"
+          className={inputStyles}
+          placeholder="Author User ID *"
+          value={formData.authorUserId}
+          onChange={handleChange}
+          required
+        />
+
+        <input
+          type="text"
+          name="assignedUserId"
+          className={inputStyles}
+          placeholder="Assigned User ID"
+          value={formData.assignedUserId}
+          onChange={handleChange}
+        />
+
         {id === null && (
           <input
             type="text"

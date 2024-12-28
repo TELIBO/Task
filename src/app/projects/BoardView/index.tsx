@@ -3,7 +3,7 @@ import React from "react";
 import { DndProvider, useDrag, useDrop } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { Task as TaskType } from "@/state/api";
-import { EllipsisVertical, Plus, Trash } from "lucide-react";
+import { ArrowRight, EllipsisVertical, Plus, Trash } from "lucide-react";
 import { format } from "date-fns";
 import Image from "next/image";
 
@@ -111,6 +111,7 @@ const TaskColumn = ({ status, tasks, moveTask, setIsModalNewTaskOpen, deleteTask
         .map((task) => (
           <Task key={task.id} task={task} deleteTask={deleteTask} />
         ))}
+      
     </div>
   );
 };
@@ -153,48 +154,76 @@ const Task = ({ task, deleteTask }: TaskProps) => {
   );
 
   return (
-    <div
-      ref={(instance) => {
-        drag(instance);
-      }}
-      className={`mb-4 rounded-md bg-white shadow dark:bg-dark-secondary ${
-        isDragging ? "opacity-50" : "opacity-100"
-      }`}
-    >
-      <div className="p-4 md:p-6">
-        <div className="flex items-start justify-between">
-          <div className="flex flex-1 flex-wrap items-center gap-2">
-            {task.priority && <PriorityTag priority={task.priority} />}
-            <div className="flex gap-2">
-              {taskTagsSplit.map((tag) => (
-                <div key={tag} className="rounded-full bg-blue-100 px-2 py-1 text-xs">
-                  {tag}
-                </div>
-              ))}
-            </div>
-          </div>
-          <button
-            onClick={() => deleteTask(task.id)} // Call delete function
-            className="flex h-6 w-4 flex-shrink-0 items-center justify-center dark:text-neutral-500 dark:hover:text-red-500 text-gray-500 hover:text-red-500"
-          >
-            <Trash size={35} />
-          </button>
+  <div ref={(instance) => drag(instance)}
+  className={`mb-4 rounded-lg bg-white shadow-lg dark:bg-dark-secondary transition-all ${
+    isDragging ? "opacity-50 scale-95" : "opacity-100 scale-100"
+  }`}
+>
+  <div className="p-5 md:p-6 space-y-4">
+    {/* Task Header */}
+    <div className="flex items-start justify-between">
+      <div className="flex flex-wrap items-center gap-2">
+        {task.priority && <PriorityTag priority={task.priority} />}
+        <div className="flex gap-2 flex-wrap">
+          {taskTagsSplit.map((tag) => (
+            <span
+              key={tag}
+              className="rounded-full bg-blue-100 px-3 py-1 text-xs text-blue-800 font-medium shadow-sm"
+            >
+              {tag}
+            </span>
+          ))}
         </div>
-
-        <div className="my-3 flex justify-between">
-          <h4 className="text-md font-bold dark:text-white">{task.title}</h4>
-          {typeof task.points === "number" && (
-            <div className="text-xs font-semibold dark:text-white">{task.points} pts</div>
-          )}
-        </div>
-
-        <div className="text-xs text-black dark:text-slate-50">
-          {formattedStartDate && <span>{formattedStartDate} - </span>}
-          {formattedDueDate && <span>{formattedDueDate}</span>}
-        </div>
-        <p className="text-sm text-black dark:text-slate-50">{task.description}</p>
       </div>
+      <button
+        onClick={() => deleteTask(task.id)}
+        className="flex items-center justify-center text-gray-400 hover:text-red-500 transition-colors"
+      >
+        <Trash size={20} />
+      </button>
     </div>
+
+    {/* Task Title */}
+    <div className="flex items-center justify-between">
+      <h4 className="text-lg font-semibold text-black dark:text-white truncate">
+        {task.title}
+      </h4>
+      {typeof task.points === "number" && (
+        <span className="text-sm font-medium bg-gray-100 dark:bg-dark-primary px-3 py-1 rounded-lg dark:text-white">
+          {task.points} pts
+        </span>
+      )}
+    </div>
+
+    {/* Task Dates */}
+    <div className="text-sm flex items-center space-x-1 text-gray-600 dark:text-gray-300">
+      {formattedStartDate && (
+        <span className="whitespace-nowrap">{formattedStartDate}</span>
+      )}
+      {formattedStartDate && formattedDueDate && <span>-</span>}
+      {formattedDueDate && (
+        <span className="whitespace-nowrap">{formattedDueDate}</span>
+      )}
+    </div>
+
+    {/* Task Description */}
+    <p className="text-sm text-gray-700 dark:text-gray-300">
+      {task.description}
+    </p>
+
+    {/* Task Author and Assignee */}
+    <div className="flex items-center space-x-3">
+      <span className="inline-flex items-center px-3 py-1 bg-blue-500 text-white text-sm rounded-lg shadow-md">
+        {task.author?.username}
+      </span>
+      <ArrowRight className="h-4 text-gray-400" />
+      <span className="inline-flex items-center px-3 py-1 bg-red-500 text-white text-sm rounded-lg shadow-md">
+        {task.assignee?.username}
+      </span>
+    </div>
+  </div>
+</div>
+
   );
 };
 
